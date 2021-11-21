@@ -4,32 +4,34 @@
 package Components.Course;
 
 import Components.Props;
+import Components.Student.Student;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class CourseComponent {
-    protected ArrayList<Course> vCourse;
+    protected HashMap<String, Course> vCourse;
 
-    public CourseComponent(String sCourseFileName) throws FileNotFoundException, IOException { 	
+    public CourseComponent(String sCourseFileName) throws IOException {
         BufferedReader bufferedReader  = new BufferedReader(new FileReader(sCourseFileName));       
-        this.vCourse  = new ArrayList<Course>();
+        this.vCourse  = new LinkedHashMap<>();
         while (bufferedReader.ready()) {
             String courseInfo = bufferedReader.readLine();
-            if(!courseInfo.equals(Props.EMPTY)) this.vCourse.add(new Course(courseInfo));
+            if(!courseInfo.equals(Props.EMPTY)) this.vCourse.put(courseInfo.split(Props.DIV)[0], new Course(courseInfo));
         }    
         bufferedReader.close();
     }
-    public ArrayList<Course> getCourseList() {
+
+    public HashMap<String, Course> getCourseList() {
         return this.vCourse;
     }
+
     public boolean isRegisteredCourse(String courseId) {
-        for (int i = 0; i < this.vCourse.size(); i++) {
-            if(((Course) this.vCourse.get(i)).match(courseId)) return true;
-        }
-        return false;
+        return this.vCourse.get(courseId) != null;
     }
 }

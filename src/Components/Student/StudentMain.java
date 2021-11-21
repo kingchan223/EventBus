@@ -10,15 +10,18 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.HashMap;
+import java.util.Map;
 
 import Components.Props;
 import Framework.*;
+import Utils.EntityUtil;
 
 public class StudentMain {
 
+	private final static EntityUtil entityUtil = new EntityUtil();
 
-
-	public static void main(String[] args) throws FileNotFoundException, IOException, NotBoundException {
+	public static void main(String[] args) throws IOException, NotBoundException {
 		Registry registry = LocateRegistry.getRegistry(Props.PORT);
 		RMIEventBus eventBus = (RMIEventBus)registry.lookup(Props.LOOKUP);
 		long componentId = eventBus.register();
@@ -54,8 +57,24 @@ public class StudentMain {
 			case CREATE -> sendEvent(EventId.ClientOutput, registerStudent(studentsList, event.getMessage()), Method.CREATE, eventBus);
 			case READ -> sendEvent(EventId.ClientOutput, makeStudentList(studentsList), Method.READ, eventBus);
 			case DELETE -> sendEvent(EventId.ClientOutput, deleteStudent(studentsList, event.getMessage()), Method.DELETE, eventBus);
+			case UPDATE -> sendEvent(EventId.ClientOutput, courseEnrolment(studentsList, event.getMessage()), Method.UPDATE, eventBus);
 			default -> {}
 		}
+	}
+
+	private static String courseEnrolment(StudentComponent studentsList, String message) {
+		String studentId = message.split(Props.DIV)[0];
+		String courseId = message.split(Props.DIV)[1];
+		if(!studentsList.isRegisteredStudent(studentId)) return Props.STD_NOT_REGI;
+
+		String studentStr = studentsList.getStudentList().get(studentId).getString();
+		if(entityUtil.validatePreCourse(studentStr, message)){
+			String student = studentsList.getStudentList().get(studentId).getString()+Props.DIV+courseId;
+			studentsList.getStudentList().replace(studentId, new Student(student));
+			return Props.STD_UPDATED;
+		}
+		else
+			return Props.PRE_NOT_ENOUGH;
 	}
 
 	public static void sendEvent(EventId eventId, String text, Method method, RMIEventBus eventBus) throws RemoteException {
@@ -70,11 +89,7 @@ public class StudentMain {
 	private static String deleteStudent(StudentComponent studentsList, String message) {
 		String studentId = message.trim();
 		if (studentsList.isRegisteredStudent(studentId)) {
-			for (int i = 0; i < studentsList.vStudent.size(); i++)
-				if(studentsList.vStudent.get(i).studentId.equals(studentId)){
-					studentsList.vStudent.remove(i);
-					break;
-				}
+			studentsList.vStudent.remove(studentId);
 			return Props.STD_DELETED;
 		} else
 			return Props.STD_NOT_REGI;
@@ -83,17 +98,17 @@ public class StudentMain {
 	private static String registerStudent(StudentComponent studentsList, String message) {
 		Student student = new Student(message);
 		if (!studentsList.isRegisteredStudent(student.studentId)) {
-			studentsList.vStudent.add(student);
+			studentsList.vStudent.put(student.studentId, student);
 			return Props.STD_ADD;
-		} else
+		}else
 			return Props.STD_ALREADY_REGI;
 	}
 
 	private static String makeStudentList(StudentComponent studentsList) {
 		String returnString = Props.EMPTY;
-		for (int j = 0; j < studentsList.vStudent.size(); j++) {
-			returnString += studentsList.getStudentList().get(j).getString() + Props.ENTER;
-		}
+		HashMap<String, Student> studentList = studentsList.getStudentList();
+		for (String key : studentList.keySet())
+			returnString += studentList.get(key).getString()+Props.ENTER;
 		return returnString;
 	}
 

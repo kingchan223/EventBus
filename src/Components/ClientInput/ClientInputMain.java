@@ -24,7 +24,6 @@ public class ClientInputMain {
 
 	private static final Util util = new Util();
 
-
 	public static void main(String[] args) throws RemoteException, NotBoundException {
 		Registry registry = LocateRegistry.getRegistry(Props.PORT);
 		RMIEventBus eventBus = (RMIEventBus)registry.lookup(Props.LOOKUP);
@@ -42,6 +41,7 @@ public class ClientInputMain {
 					case Props.MENU_N4 -> sendEvent(EventId.Course, makeCourseInfo(), Method.CREATE, eventBus);
 					case Props.MENU_N5 -> sendEvent(EventId.Student, deleteStudentID(), Method.DELETE, eventBus);
 					case Props.MENU_N6 -> sendEvent(EventId.Course, deleteCourseID(), Method.DELETE, eventBus);
+					case Props.MENU_N7 -> sendEvent(EventId.Course, courseEnrolment(), Method.UPDATE, eventBus);
 					case Props.MENU_N0 -> {
 						sendEventQuit(EventId.QuitTheSystem, Props.QUIT_SYS, componentId, eventBus);
 						done = true;
@@ -54,6 +54,7 @@ public class ClientInputMain {
 		}
 	}
 
+
 	public static void sendEvent(EventId eventId, String text, Method method, RMIEventBus eventBus) throws RemoteException {
 		eventBus.sendEvent(new Event(eventId, text, method));
 		printLogSend(eventId);
@@ -65,11 +66,21 @@ public class ClientInputMain {
 		printLogSend(eventId);
 	}
 
+	private static String courseEnrolment() throws IOException {
+		System.out.println(Props.STD_ID_MSG);
+		String studentId = util.validateId(new BufferedReader(new InputStreamReader(System.in)).readLine().trim(), Props.STD_ID_LEN);
+		System.out.println(Props.COURSE_ID_MSG);
+		String courseId = util.validateId(new BufferedReader(new InputStreamReader(System.in)).readLine().trim(), Props.COURSE_ID_LEN);
+		return studentId + Props.DIV + courseId;
+	}
+
 	private static String deleteCourseID() throws IOException {
+		System.out.println(Props.COURSE_ID_MSG);
 		return util.validateId(new BufferedReader(new InputStreamReader(System.in)).readLine().trim(), Props.COURSE_ID_LEN);
 	}
 
 	private static String deleteStudentID() throws IOException {
+		System.out.println(Props.STD_ID_MSG);
 		return util.validateId(new BufferedReader(new InputStreamReader(System.in)).readLine().trim(), Props.STD_ID_LEN);
 	}
 

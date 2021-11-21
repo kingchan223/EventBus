@@ -18,7 +18,6 @@ public class ClientOutputMain {
 	public static void main(String[] args) throws RemoteException, IOException, NotBoundException {
 		Registry registry = LocateRegistry.getRegistry(Props.PORT);
 		RMIEventBus eventBusInterface = (RMIEventBus)registry.lookup(Props.LOOKUP);
-//		RMIEventBus eventBusInterface = (RMIEventBus) Naming.lookup(Props.LOOKUP);
 		long componentId = eventBusInterface.register();
 		System.out.println(Props.CLIENT_OUTPUT_SUCCESS + componentId);
 		

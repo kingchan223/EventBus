@@ -11,29 +11,29 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 public class StudentComponent {
-	protected ArrayList<Student> vStudent;
+	protected HashMap<String, Student> vStudent;
 	
 	public StudentComponent(String sStudentFileName) throws FileNotFoundException, IOException {
 		BufferedReader bufferedReader = new BufferedReader(new FileReader(sStudentFileName));
-		this.vStudent = new ArrayList<Student>();
+		this.vStudent = new LinkedHashMap<>();
 		while (bufferedReader.ready()) {
 			String stuInfo = bufferedReader.readLine();
-			if (!stuInfo.equals(Props.EMPTY)) this.vStudent.add(new Student(stuInfo));
+			if (!stuInfo.equals(Props.EMPTY)) this.vStudent.put(stuInfo.split(Props.DIV)[0], new Student(stuInfo));
 		}
 		bufferedReader.close();
 	}
-	public ArrayList<Student> getStudentList() {
+	public HashMap<String, Student> getStudentList() {
 		return vStudent;
 	}
-	public void setStudent(ArrayList<Student> vStudent) {
+	public void setStudent(HashMap<String, Student> vStudent) {
 		this.vStudent = vStudent;
 	}
 	public boolean isRegisteredStudent(String sSID) {
-		for (int i = 0; i < this.vStudent.size(); i++) {
-			if (((Student) this.vStudent.get(i)).match(sSID)) return true;
-		}
-		return false;
+		return vStudent.get(sSID) != null;
 	}
 }

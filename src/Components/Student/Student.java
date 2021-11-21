@@ -37,8 +37,7 @@ public class Student {
 	}
 	public String getString() {
 		String stringReturn = this.studentId + Props.DIV + this.name + Props.DIV + this.department;
-		for (int i = 0; i < this.completedCoursesList.size(); i++) 
-			stringReturn += Props.DIV + this.completedCoursesList.get(i).toString();
+		for (String s : this.completedCoursesList) stringReturn += Props.DIV + s.toString();
 		return stringReturn;
 	}
 }

@@ -28,7 +28,7 @@ public class Util {
         return reStr;
     }
 
-    private static boolean isValidStr(String str) {
+    private boolean isValidStr(String str) {
         return str != null && !str.equals(Props.DIV) && !str.equals(Props.EMPTY);
     }
 
@@ -61,7 +61,7 @@ public class Util {
         if(idLen == Props.COURSE_ID_LEN) System.out.println(Props.WRONG_COURSE_ID_INPUT);
     }
 
-    public static void printWrongInputMsg(InputType iputType){
+    public void printWrongInputMsg(InputType iputType){
         System.out.println(Props.WRONG_STR_INPUT+ iputType);
     }
 
@@ -74,8 +74,6 @@ public class Util {
         }
         return retIds;
     }
-
-
 //    public static void studentMethods(Event event, StudentComponent studentsList) throws RemoteException {
 //        printLogEvent(event);
 //        switch (event.getMethod()) {

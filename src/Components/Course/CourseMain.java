@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright(c) 2021 All rights reserved by Jungho Kim in MyungJi University 
  */
 package Components.Course;
@@ -10,6 +10,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.HashMap;
 
 import Components.Props;
 import Components.Student.Student;
@@ -54,8 +55,20 @@ public class CourseMain {
 			case CREATE -> sendEvent(EventId.ClientOutput, registerCourse(coursesList, event.getMessage()), Method.CREATE, eventBus);
 			case READ -> sendEvent(EventId.ClientOutput, makeCourseList(coursesList), Method.READ, eventBus);
 			case DELETE -> sendEvent(EventId.ClientOutput, deleteCourse(coursesList, event.getMessage()), Method.DELETE, eventBus);
+			case UPDATE -> {
+				if(coursesList.isRegisteredCourse(event.getMessage().split(Props.DIV)[1]))
+					sendEvent(EventId.Student, courseInfoLine(coursesList, event.getMessage()), Method.UPDATE, eventBus);
+				else
+					sendEvent(EventId.ClientOutput,  Props.COURSE_NOT_REGI, null, eventBus);
+			}
 			default -> {}
 		}
+	}
+
+	private static String courseInfoLine(CourseComponent coursesList, String message) {
+		String courseId = message.split(Props.DIV)[1];
+		String studentId = message.split(Props.DIV)[0];
+		return studentId+Props.DIV+coursesList.getCourseList().get(courseId).getString();
 	}
 
 	public static void sendEvent(EventId eventId, String text, Method method, RMIEventBus eventBus) throws RemoteException {
@@ -83,7 +96,7 @@ public class CourseMain {
 	private static String registerCourse(CourseComponent coursesList, String message) {
 		Course course = new Course(message);
 		if (!coursesList.isRegisteredCourse(course.courseId)) {
-			coursesList.vCourse.add(course);
+			coursesList.vCourse.put(course.courseId, course);
 			return Props.COURSE_ADD;
 		} else
 			return Props.COURSE_ALREADY_REGI;
@@ -91,9 +104,9 @@ public class CourseMain {
 
 	private static String makeCourseList(CourseComponent coursesList) {
 		String returnString = Props.EMPTY;
-		for (int j = 0; j < coursesList.vCourse.size(); j++) {
-			returnString += coursesList.getCourseList().get(j).getString() + "\n";
-		}
+		HashMap<String, Course> courseList = coursesList.getCourseList();
+		for (String key : courseList.keySet())
+			returnString += courseList.get(key).getString()+Props.ENTER;
 		return returnString;
 	}
 

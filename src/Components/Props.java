@@ -10,6 +10,8 @@ public interface Props {
     public static final int EQ_INCRE = 1;
     public static final int PORT = 1888;
     public static final int CLOCK_TIME = 1000;
+    public static final int PRECOURSE_IDX = 3;
+    public static final int COMPCOURSE_IDX = 4;
     public static final Long UID = 1L;
     public static final String LOOKUP = "EventBus";
     public static final String COURSES_TXT = "src/Courses.txt";
@@ -47,6 +49,8 @@ public interface Props {
     public static final String MENU_N5 = "5";
     public static final String MENU6 = "6. Delete a Course";
     public static final String MENU_N6 = "6";
+    public static final String MENU7 = "7. Student Course Enrolment";
+    public static final String MENU_N7 = "7";
     public static final String MENU0 = "0. Quit the system";
     public static final String MENU_N0 = "0";
     public static final String MENU_C = "\n Choose No.: ";
@@ -72,6 +76,8 @@ public interface Props {
     public static final String COURSE_NOT_REGI = "This course is not registered.";
     public static final String COURSE_ADD = "This course is successfully added.";
     public static final String COURSE_ALREADY_REGI = "This course is already registered.";
+    public static final String PRE_NOT_ENOUGH = "This student's PreCourse is not enough.";
+    public static final String STD_UPDATED = "This student succeeded in registering for the course.";
 
     static void printUserInput(String userInput) {
         System.out.println("\n ** Message: " + userInput + "\n");

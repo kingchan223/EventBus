@@ -39,8 +39,8 @@ public class Course {
     }
     public String getString() {
         String stringReturn = this.courseId + Props.DIV + this.instructor + Props.DIV + this.name;
-        for(int i = 0; i < this.prerequisiteCoursesList.size(); i++) {
-            stringReturn += Props.DIV + this.prerequisiteCoursesList.get(i).toString();
+        for (String s : this.prerequisiteCoursesList) {
+            stringReturn += Props.DIV + s.toString();
         }
         return stringReturn;
     }
