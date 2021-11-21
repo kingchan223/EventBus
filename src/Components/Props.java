@@ -78,6 +78,7 @@ public interface Props {
     public static final String COURSE_ALREADY_REGI = "This course is already registered.";
     public static final String PRE_NOT_ENOUGH = "This student's PreCourse is not enough.";
     public static final String STD_UPDATED = "This student succeeded in registering for the course.";
+    public static final String STD_ALREADY_COMP = "This student try register already completed course";
 
     static void printUserInput(String userInput) {
         System.out.println("\n ** Message: " + userInput + "\n");

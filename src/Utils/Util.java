@@ -66,6 +66,7 @@ public class Util {
     }
 
     public String validateCourseIds(String courseIds) {//12345 43243 84843
+        if(!isValidStr(courseIds.trim())) return Props.EMPTY;
         String[] ids = courseIds.split(Props.DIV);
         String retIds = Props.EMPTY;
         for (String id : ids) {

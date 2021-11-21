@@ -132,6 +132,7 @@ public class ClientInputMain {
 		System.out.println(Props.MENU4);
 		System.out.println(Props.MENU5);
 		System.out.println(Props.MENU6);
+		System.out.println(Props.MENU7);
 		System.out.println(Props.MENU0);
 		System.out.print(Props.MENU_C);
 	}

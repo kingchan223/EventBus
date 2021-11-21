@@ -66,8 +66,8 @@ public class StudentMain {
 		String studentId = message.split(Props.DIV)[0];
 		String courseId = message.split(Props.DIV)[1];
 		if(!studentsList.isRegisteredStudent(studentId)) return Props.STD_NOT_REGI;
-
 		String studentStr = studentsList.getStudentList().get(studentId).getString();
+		if(studentStr.contains(courseId)) return Props.STD_ALREADY_COMP;
 		if(entityUtil.validatePreCourse(studentStr, message)){
 			String student = studentsList.getStudentList().get(studentId).getString()+Props.DIV+courseId;
 			studentsList.getStudentList().replace(studentId, new Student(student));
