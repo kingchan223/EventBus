@@ -1,6 +1,6 @@
 package domain;
 
-import Components.Props;
+import Utils.Props;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

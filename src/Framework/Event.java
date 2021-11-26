@@ -4,7 +4,7 @@
 
 package Framework;
 
-import Components.Props;
+import Utils.Props;
 
 import java.io.Serial;
 import java.io.Serializable;

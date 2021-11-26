@@ -1,16 +1,10 @@
 package Utils;
 
 import Components.InputType;
-import Components.Props;
-import Components.Student.StudentComponent;
-import Framework.Event;
-import Framework.EventId;
-import Framework.Method;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.rmi.RemoteException;
 
 public class Util {
 
@@ -27,11 +21,9 @@ public class Util {
         }
         return reStr;
     }
-
     private boolean isValidStr(String str) {
         return str != null && !str.equals(Props.DIV) && !str.equals(Props.EMPTY);
     }
-
     private static boolean isNumber(String id){
         try{
             Integer.parseInt(id);

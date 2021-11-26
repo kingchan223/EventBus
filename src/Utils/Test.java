@@ -1,16 +1,12 @@
 package Utils;
 
 import Components.InputType;
-import Components.Props;
-import Framework.Event;
-import Framework.EventId;
 import domain.Course;
 import domain.Student;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.stream.IntStream;
 
 public class Test {
     private static String makeStudentInfo() throws IOException {

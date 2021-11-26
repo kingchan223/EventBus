@@ -4,7 +4,7 @@
 
 package Components.Student;
 
-import Components.Props;
+import Utils.Props;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;

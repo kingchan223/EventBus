@@ -4,16 +4,14 @@
 
 package Components.Student;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
-import java.util.Map;
 
-import Components.Props;
+import Utils.Props;
 import Framework.*;
 import Utils.EntityUtil;
 

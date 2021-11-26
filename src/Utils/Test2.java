@@ -1,15 +1,5 @@
 package Utils;
 
-import Components.InputType;
-import Components.Props;
-import domain.Course;
-import domain.Student;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-
 public class Test2 {
     public static void main(String[] args) {
         String[] strList = {"88888888","17651", "Kim", "Models_of_Software_Systems", "12345"};

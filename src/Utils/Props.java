@@ -1,4 +1,4 @@
-package Components;
+package Utils;
 
 public interface Props {
     public static final String DIV = " ";
@@ -8,7 +8,7 @@ public interface Props {
     public static final int COURSE_ID_LEN = 5;
     public static final int EQ_CAPA = 15;
     public static final int EQ_INCRE = 1;
-    public static final int PORT = 1888;
+    public static final int PORT = 8080;
     public static final int CLOCK_TIME = 1000;
     public static final int PRECOURSE_IDX = 3;
     public static final int COMPCOURSE_IDX = 4;

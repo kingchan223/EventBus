@@ -4,7 +4,7 @@
 
 package Framework;
 
-import Components.Props;
+import Utils.Props;
 
 import java.io.Serial;
 import java.rmi.RemoteException;
@@ -20,7 +20,7 @@ public class RMIEventBusImpl extends UnicastRemoteObject implements RMIEventBus 
 
 	public RMIEventBusImpl() throws RemoteException {
 		super();
-		eventQueueList = new Vector<EventQueue>(Props.EQ_CAPA, Props.EQ_INCRE);
+		eventQueueList = new Vector<>(Props.EQ_CAPA, Props.EQ_INCRE);
 	}
 
 	public static void main(String[] args) {
@@ -28,7 +28,7 @@ public class RMIEventBusImpl extends UnicastRemoteObject implements RMIEventBus 
 			//EventBus는 이벤트를 처리할 각 이벤트 리스너를 등록하고 각 리스너에게 이벤트를 전파하는 역할
 			RMIEventBusImpl eventBus = new RMIEventBusImpl();
 			Registry rgsty = LocateRegistry.createRegistry(Props.PORT);
-			rgsty.bind(Props.LOOKUP, eventBus);
+			rgsty.rebind(Props.LOOKUP, eventBus);
 			System.out.println(Props.BUS_RUNNING);
 		} catch (Exception e) {
 			System.out.println(Props.BUS_ERR + e);

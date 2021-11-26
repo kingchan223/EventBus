@@ -3,7 +3,7 @@
  */
 package Components.Course;
 
-import Components.Props;
+import Utils.Props;
 
 import java.util.ArrayList;
 import java.util.StringTokenizer;

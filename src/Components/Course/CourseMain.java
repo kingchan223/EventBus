@@ -3,21 +3,17 @@
  */
 package Components.Course;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.HashMap;
 
-import Components.Props;
-import Components.Student.Student;
+import Utils.Props;
 import Framework.*;
 
 public class CourseMain {
-
 	public static void main(String[] args) throws IOException, NotBoundException {
 		Registry registry = LocateRegistry.getRegistry(Props.PORT);
 		RMIEventBus eventBus = (RMIEventBus)registry.lookup(Props.LOOKUP);

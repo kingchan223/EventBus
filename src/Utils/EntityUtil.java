@@ -1,7 +1,5 @@
 package Utils;
 
-import Components.Props;
-
 
 public class EntityUtil {
 
