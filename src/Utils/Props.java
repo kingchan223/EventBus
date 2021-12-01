@@ -8,7 +8,8 @@ public interface Props {
     public static final int COURSE_ID_LEN = 5;
     public static final int EQ_CAPA = 15;
     public static final int EQ_INCRE = 1;
-    public static final int PORT = 8080;
+    public static final int PORT = 8088;
+    public static final String HOST = "127.0.0.1";
     public static final int CLOCK_TIME = 1000;
     public static final int PRECOURSE_IDX = 3;
     public static final int COMPCOURSE_IDX = 4;
@@ -19,6 +20,7 @@ public interface Props {
     public static final String GET = "Get";
     public static final String POST = "Post";
     public static final String PUT = "Put";
+    public static final String OK = "OK12345";
 
 
 
@@ -74,11 +76,13 @@ public interface Props {
     public static final String STD_ALREADY_REGI = "This student is already registered.";
     public static final String COURSE_DELETED = "This course is successfully deleted.";
     public static final String COURSE_NOT_REGI = "This course is not registered.";
+    public static final String COURSE_NOT_VALID = "This course is not registered OR pre-course is not enough.";
     public static final String COURSE_ADD = "This course is successfully added.";
     public static final String COURSE_ALREADY_REGI = "This course is already registered.";
     public static final String PRE_NOT_ENOUGH = "This student's PreCourse is not enough.";
     public static final String STD_UPDATED = "This student succeeded in registering for the course.";
     public static final String STD_ALREADY_COMP = "This student try register already completed course";
+    public static final String STD_CHECK_COURSE = "This student's courses go to Course Server";
 
     static void printUserInput(String userInput) {
         System.out.println("\n ** Message: " + userInput + "\n");

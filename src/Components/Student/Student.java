@@ -32,12 +32,47 @@ public class Student {
 	public String getName() {
 		return this.name;
 	}
+
 	public ArrayList<String> getCompletedCourses() {
 		return this.completedCoursesList;
 	}
+
 	public String getString() {
 		String stringReturn = this.studentId + Props.DIV + this.name + Props.DIV + this.department;
 		for (String s : this.completedCoursesList) stringReturn += Props.DIV + s.toString();
 		return stringReturn;
+	}
+
+	public Student(String inputString, String sign) {
+		StringTokenizer stringTokenizer = new StringTokenizer(inputString);
+		String ok = stringTokenizer.nextToken();
+		this.studentId = stringTokenizer.nextToken();
+		this.name = stringTokenizer.nextToken();
+		this.name = this.name + Props.DIV + stringTokenizer.nextToken();
+		this.department = stringTokenizer.nextToken();
+		while (stringTokenizer.hasMoreTokens()) this.completedCoursesList.add(stringTokenizer.nextToken());
+	}
+
+	public static Student makeStudentWithOk(String inputString) {
+		StringTokenizer stringTokenizer = new StringTokenizer(inputString);
+		String ok = stringTokenizer.nextToken();
+		String studentInfo = new String(String.valueOf(stringTokenizer));
+		return new Student(studentInfo);
+	}
+
+	public boolean hasCourseInfo() {
+		return this.getCompletedCourses().size()>0;
+	}
+
+	public String getStudentId() {
+		return studentId;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public ArrayList<String> getCompletedCoursesList() {
+		return completedCoursesList;
 	}
 }

@@ -3,49 +3,62 @@
  */
 package Components.ClientInput;
 
+import Utils.InputType;
+import Components.RmiConnection;
+import Framework.*;
+import Utils.EntityUtil;
+import Utils.Props;
+import Utils.Util;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-
-import Components.InputType;
-import Utils.Props;
-import Framework.*;
-import Utils.Util;
-import domain.Course;
-import domain.Student;
+import java.rmi.*;
 
 /*Send Event*/
 public class ClientInputMain {
 
 	private static final Util util = new Util();
+	private static final EntityUtil eUtil = new EntityUtil();
 
-	public static void main(String[] args) throws RemoteException, NotBoundException {
-		Registry registry = LocateRegistry.getRegistry(Props.PORT);
-		RMIEventBus eventBus = (RMIEventBus)registry.lookup(Props.LOOKUP);
+	public static void main(String[] args) throws RemoteException, NotBoundException{
+		RMIEventBus eventBus = RmiConnection.getInstance();
+//		System.out.println("eventBus = " + eventBus);
 		long componentId = eventBus.register();
 		System.out.println(Props.CLIENT_INPUT_SUCCESS+ componentId);
-
 		boolean done = false;
 		while (!done) {
 			writeMenu();
 			try {
 				switch (new BufferedReader(new InputStreamReader(System.in)).readLine().trim()) {
-					case Props.MENU_N1 -> sendEvent(EventId.Student, null, Method.READ, eventBus);
-					case Props.MENU_N2 -> sendEvent(EventId.Course, null, Method.READ, eventBus);
-					case Props.MENU_N3 -> sendEvent(EventId.Student, makeStudentInfo(), Method.CREATE, eventBus);
-					case Props.MENU_N4 -> sendEvent(EventId.Course, makeCourseInfo(), Method.CREATE, eventBus);
-					case Props.MENU_N5 -> sendEvent(EventId.Student, deleteStudentID(), Method.DELETE, eventBus);
-					case Props.MENU_N6 -> sendEvent(EventId.Course, deleteCourseID(), Method.DELETE, eventBus);
-					case Props.MENU_N7 -> sendEvent(EventId.Course, courseEnrolment(), Method.UPDATE, eventBus);
-					case Props.MENU_N0 -> {
+					case Props.MENU_N1:
+						sendEvent(EventId.ListStudents, null, eventBus);
+						break;
+					case Props.MENU_N2:
+						sendEvent(EventId.ListCourses, null, eventBus);
+						break;
+					case Props.MENU_N3 :
+						sendEvent(EventId.RegisterStudent, makeStudentInfo(), eventBus);
+						break;
+					case Props.MENU_N4 :
+						sendEvent(EventId.RegisterCourse, makeCourseInfo(), eventBus);
+						break;
+					case Props.MENU_N5 :
+						sendEvent(EventId.DeleteStudent, deleteStudentID(), eventBus);
+						break;
+					case Props.MENU_N6 :
+						sendEvent(EventId.DeleteCourse, deleteCourseID(),eventBus);
+						break;
+					case Props.MENU_N7 :
+						sendEvent(EventId.EnrollCourseByStudent, courseEnrolment(), eventBus);
+						break;
+					case Props.MENU_N0 :
 						sendEventQuit(EventId.QuitTheSystem, Props.QUIT_SYS, componentId, eventBus);
 						done = true;
-					}
-					default -> printWrongMenu();
+						break;
+					default :
+						printWrongMenu();
+						break;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -53,14 +66,13 @@ public class ClientInputMain {
 		}
 	}
 
-
-	public static void sendEvent(EventId eventId, String text, Method method, RMIEventBus eventBus) throws RemoteException {
-		eventBus.sendEvent(new Event(eventId, text, method));
+	public static void sendEvent(EventId eventId, String text, RMIEventBus eventBus) throws RemoteException {
+		eventBus.sendEvent(new Event(eventId, text));
 		printLogSend(eventId);
 	}
 
 	public static void sendEventQuit(EventId eventId, String text, long componentId, RMIEventBus eventBus) throws RemoteException {
-		eventBus.sendEvent(new Event(eventId, text, null));
+		eventBus.sendEvent(new Event(eventId, text));
 		eventBus.unRegister(componentId);
 		printLogSend(eventId);
 	}
@@ -94,7 +106,7 @@ public class ClientInputMain {
 		String department = util.validateStr(new BufferedReader(new InputStreamReader(System.in)).readLine().trim(), InputType.Department);
 		System.out.println(Props.STD_COMP_COURSE_MSG);
 		String compCourseIds = util.validateCourseIds(new BufferedReader(new InputStreamReader(System.in)).readLine());
-		String studentInfo = Student.makeStudent(id, firstName, familyName, department, compCourseIds);
+		String studentInfo = eUtil.makeStudentStr(id, firstName, familyName, department, compCourseIds);
 		Props.printUserInput(studentInfo);
 		return studentInfo;
 	}
@@ -108,21 +120,10 @@ public class ClientInputMain {
 		String courseName = util.validateStr(new BufferedReader(new InputStreamReader(System.in)).readLine().trim(), InputType.CourseName);
 		System.out.println(Props.COURSE_PRECOURSE_MSG);
 		String preCourseIds= util.validateCourseIds(new BufferedReader(new InputStreamReader(System.in)).readLine());
-		String courseInfo = Course.makeCourse(id, familyName, courseName, preCourseIds);
+		String courseInfo = eUtil.makeCourseStr(id, familyName, courseName, preCourseIds);
 		Props.printUserInput(courseInfo);
 		return courseInfo;
 	}
-
-//	//@SuppressWarnings("unused")
-//	private static String setStudentId() throws IOException {
-//		System.out.println("\nEnter student ID and press return (Ex. 20131234)>> ");
-//		return new BufferedReader(new InputStreamReader(System.in)).readLine().trim();
-//	}
-//	//@SuppressWarnings("unused")
-//	private static String setCourseId() throws IOException {
-//		System.out.println("\nEnter course ID and press return (Ex. 12345)>> ");
-//		return new BufferedReader(new InputStreamReader(System.in)).readLine().trim();
-//	}
 
 	private static void writeMenu() {
 		System.out.println(Props.MENU1);

@@ -6,14 +6,12 @@ package Framework;
 
 import Utils.Props;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Vector;
 
 public class EventQueue implements Serializable {
 
-    @Serial
 	private static final long serialVersionUID = Props.UID; // Default value for Serializable interface
     private Vector<Event> eventList;
 	private long componentId;

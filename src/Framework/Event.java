@@ -6,21 +6,17 @@ package Framework;
 
 import Utils.Props;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 
 public class Event implements Serializable {
-    @Serial
 	private static final long serialVersionUID = Props.UID; //Default serializable value
     private String message;
 	private EventId eventId;
-	private Method method;
 
-	public Event(EventId id, String text, Method method ) {
+	public Event(EventId id, String text) {
 		this.message = text;
 		this.eventId = id;
-		this.method = method;
 	}
 
 //	public Event(EventId id, String text) {
@@ -29,7 +25,6 @@ public class Event implements Serializable {
 //	}
 
 	public Event(EventId id ) {
-		this.method = null;
 		this.message = null;
 		this.eventId = id;
 	}
@@ -41,7 +36,4 @@ public class Event implements Serializable {
 		return message;
 	}
 
-	public Method getMethod() {
-		return method;
-	}
 }

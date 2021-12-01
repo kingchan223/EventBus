@@ -1,7 +1,5 @@
 package Utils;
 
-import Components.InputType;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -67,34 +65,4 @@ public class Util {
         }
         return retIds;
     }
-//    public static void studentMethods(Event event, StudentComponent studentsList) throws RemoteException {
-//        printLogEvent(event);
-//        switch (event.getMethod()) {
-//            case CREATE -> sendEvent(EventId.ClientOutput, registerStudent(studentsList, event.getMessage()), Method.CREATE);
-//            case READ -> sendEvent(EventId.ClientOutput, makeStudentList(studentsList), Method.READ);
-//            case DELETE -> sendEvent(EventId.ClientOutput, deleteStudent(studentsList, event.getMessage()), Method.DELETE);
-//            default -> {}
-//        }
-//    }
-//
-//    public static void sendEvent(EventId eventId, String text, Method method) throws RemoteException {
-//        eventBus.sendEvent(new Event(eventId, text, method));
-//    }
-//
-//    public static void sendEventQuit(EventId eventId, String text, long componentId) throws RemoteException {
-//        eventBus.sendEvent(new Event(eventId, text, null));
-//        eventBus.unRegister(componentId);
-//    }
-//
-//    private static void printLogEvent(Event event) {
-//        System.out.println(event.getMethod() + Props.EVENT_INFO_ID + event.getEventId() + Props.EVENT_INFO_MSG + event.getMessage());
-//    }
-
-//    public static void printUserInput(String userInput){
-//        System.out.println("\n ** Message: " + userInput + "\n");
-//    }
-//
-//    public static void printInvalidVal(String id){
-//        System.out.println("\nThe id ( "+id+" ) you entered is invalid.");
-//    }
 }

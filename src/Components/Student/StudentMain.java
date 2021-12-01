@@ -1,27 +1,25 @@
 /*
- * Copyright(c) 2021 All rights reserved by Jungho Kim in MyungJi University 
+ * Copyright(c) 2021 All rights reserved by Jungho Kim in MyungJi University
  */
 
 package Components.Student;
 
+import Components.RmiConnection;
+import Framework.*;
+import Utils.EntityUtil;
+import Utils.Props;
+
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.HashMap;
-
-import Utils.Props;
-import Framework.*;
-import Utils.EntityUtil;
 
 public class StudentMain {
 
 	private final static EntityUtil entityUtil = new EntityUtil();
 
 	public static void main(String[] args) throws IOException, NotBoundException {
-		Registry registry = LocateRegistry.getRegistry(Props.PORT);
-		RMIEventBus eventBus = (RMIEventBus)registry.lookup(Props.LOOKUP);
+		RMIEventBus eventBus = RmiConnection.getInstance();
 		long componentId = eventBus.register();
 		System.out.println(Props.STUDENT_MAIN_SUCCESS + componentId);
 
@@ -38,49 +36,74 @@ public class StudentMain {
 			for (int i = 0; i < eventQueue.getSize(); i++) {
 				event = eventQueue.getEvent();
 				switch (event.getEventId()) {
-					case Student -> studentMethods(event, studentsList, eventBus);
-					case QuitTheSystem -> {
-						sendEventQuit(EventId.QuitTheSystem, Props.QUIT_SYS, componentId, eventBus);
-						done = true;
+					case RegisterStudent:{
+						String message = event.getMessage();
+						if(message.split(Props.DIV)[1].equals(Props.OK)) registerWithOk(studentsList, message, eventBus);
+						else register(studentsList, eventBus, message);
+						break;
 					}
-					default -> {}
+					case ListStudents :
+						sendEvent(EventId.ClientOutput, makeStudentList(studentsList), eventBus);
+						break;
+					case DeleteStudent :
+						sendEvent(EventId.ClientOutput, deleteStudent(studentsList, event.getMessage()), eventBus);
+						break;
+					case EnrollCourseByStudent :
+						String message = event.getMessage();
+						if(message.split(Props.DIV)[1].equals(Props.OK)) updateWithOk(studentsList, message, eventBus);
+						else sendEvent(EventId.ClientOutput,courseEnrolment(studentsList, event.getMessage(), eventBus), eventBus);
+						break;
+					default :
+						break;
 				}
 			}
 		}
 	}
 
-	public static void studentMethods(Event event, StudentComponent studentsList, RMIEventBus eventBus) throws RemoteException {
-		printLogEvent(event);
-		switch (event.getMethod()) {
-			case CREATE -> sendEvent(EventId.ClientOutput, registerStudent(studentsList, event.getMessage()), Method.CREATE, eventBus);
-			case READ -> sendEvent(EventId.ClientOutput, makeStudentList(studentsList), Method.READ, eventBus);
-			case DELETE -> sendEvent(EventId.ClientOutput, deleteStudent(studentsList, event.getMessage()), Method.DELETE, eventBus);
-			case UPDATE -> sendEvent(EventId.ClientOutput, courseEnrolment(studentsList, event.getMessage()), Method.UPDATE, eventBus);
-			default -> {}
+	private static void updateWithOk(StudentComponent studentsList, String message, RMIEventBus eventBus) throws RemoteException {
+		String[] split = message.split(Props.DIV);
+		Student student = studentsList.getStudentList().get(split[1]);
+		String updated = student.getString()+Props.DIV+split[2];
+		Student updatedStudent = new Student(updated);
+		studentsList.vStudent.replace(student.getStudentId(), updatedStudent);
+		sendEvent(EventId.ClientOutput, Props.STD_ADD, eventBus);
+	}
+
+	private static void register(StudentComponent studentsList, RMIEventBus eventBus, String message) throws RemoteException {
+		Student student = new Student(message);
+		if(student.hasCourseInfo()) sendEvent(EventId.ValidateCourses, message, eventBus);
+		else{
+			Student student1 = new Student(message);
+			studentsList.vStudent.put(student1.getStudentId(), student1);
+			sendEvent(EventId.ClientOutput, Props.STD_ADD, eventBus);
 		}
 	}
 
-	private static String courseEnrolment(StudentComponent studentsList, String message) {
+	private static void registerWithOk(StudentComponent studentsList, String message, RMIEventBus eventBus) throws RemoteException {
+		Student student = Student.makeStudentWithOk(message);
+		studentsList.vStudent.put(student.getStudentId(), student);
+		sendEvent(EventId.ClientOutput, Props.STD_ADD, eventBus);
+	}
+
+	private static String courseEnrolment(StudentComponent studentsList, String message, RMIEventBus eventBus) throws RemoteException {
 		String studentId = message.split(Props.DIV)[0];
 		String courseId = message.split(Props.DIV)[1];
 		if(!studentsList.isRegisteredStudent(studentId)) return Props.STD_NOT_REGI;
 		String studentStr = studentsList.getStudentList().get(studentId).getString();
 		if(studentStr.contains(courseId)) return Props.STD_ALREADY_COMP;
-		if(entityUtil.validatePreCourse(studentStr, message)){
-			String student = studentsList.getStudentList().get(studentId).getString()+Props.DIV+courseId;
-			studentsList.getStudentList().replace(studentId, new Student(student));
-			return Props.STD_UPDATED;
+		if(entityUtil.validatePreCourse(studentStr, message)) {
+			sendEvent(EventId.ValidateCourse, message, eventBus);
+			return Props.STD_CHECK_COURSE;
 		}
-		else
-			return Props.PRE_NOT_ENOUGH;
+		else return Props.PRE_NOT_ENOUGH;
 	}
 
-	public static void sendEvent(EventId eventId, String text, Method method, RMIEventBus eventBus) throws RemoteException {
-		eventBus.sendEvent(new Event(eventId, text, method));
+	public static void sendEvent(EventId eventId, String text, RMIEventBus eventBus) throws RemoteException {
+		eventBus.sendEvent(new Event(eventId, text));
 	}
 
 	public static void sendEventQuit(EventId eventId, String text, long componentId, RMIEventBus eventBus) throws RemoteException {
-		eventBus.sendEvent(new Event(eventId, text, null));
+		eventBus.sendEvent(new Event(eventId, text));
 		eventBus.unRegister(componentId);
 	}
 
@@ -89,21 +112,12 @@ public class StudentMain {
 		if (studentsList.isRegisteredStudent(studentId)) {
 			studentsList.vStudent.remove(studentId);
 			return Props.STD_DELETED;
-		} else
-			return Props.STD_NOT_REGI;
-	}
-
-	private static String registerStudent(StudentComponent studentsList, String message) {
-		Student student = new Student(message);
-		if (!studentsList.isRegisteredStudent(student.studentId)) {
-			studentsList.vStudent.put(student.studentId, student);
-			return Props.STD_ADD;
-		}else
-			return Props.STD_ALREADY_REGI;
+		}
+		else return Props.STD_NOT_REGI;
 	}
 
 	private static String makeStudentList(StudentComponent studentsList) {
-		String returnString = Props.EMPTY;
+		String returnString = Props.ENTER;
 		HashMap<String, Student> studentList = studentsList.getStudentList();
 		for (String key : studentList.keySet())
 			returnString += studentList.get(key).getString()+Props.ENTER;
@@ -111,6 +125,6 @@ public class StudentMain {
 	}
 
 	private static void printLogEvent(Event event) {
-		System.out.println(event.getMethod() + Props.EVENT_INFO_ID + event.getEventId() + Props.EVENT_INFO_MSG + event.getMessage());
+		System.out.println(Props.EVENT_INFO_ID + event.getEventId() + Props.EVENT_INFO_MSG + event.getMessage());
 	}
 }

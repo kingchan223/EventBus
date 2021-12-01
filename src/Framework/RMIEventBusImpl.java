@@ -6,7 +6,7 @@ package Framework;
 
 import Utils.Props;
 
-import java.io.Serial;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -14,7 +14,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Vector;
 
 public class RMIEventBusImpl extends UnicastRemoteObject implements RMIEventBus {
-	@Serial
 	private static final long serialVersionUID = Props.UID;
 	static Vector<EventQueue> eventQueueList;
 
@@ -27,11 +26,20 @@ public class RMIEventBusImpl extends UnicastRemoteObject implements RMIEventBus 
 		try {
 			//EventBus는 이벤트를 처리할 각 이벤트 리스너를 등록하고 각 리스너에게 이벤트를 전파하는 역할
 			RMIEventBusImpl eventBus = new RMIEventBusImpl();
-			Registry rgsty = LocateRegistry.createRegistry(Props.PORT);
-			rgsty.rebind(Props.LOOKUP, eventBus);
+			Registry registry = LocateRegistry.createRegistry(Props.PORT);
+			registry.bind(Props.LOOKUP, eventBus);
+
+			Registry registry2 = LocateRegistry.getRegistry(Props.HOST, Props.PORT);
+			RMIEventBus lookup = (RMIEventBus)registry2.lookup(Props.LOOKUP);
+			registry.unbind(Props.LOOKUP);
+			registry.bind(Props.LOOKUP, lookup);
+
+//			System.out.println("registry2 = " + registry2);
+//			System.out.println("registry = " + registry);
 			System.out.println(Props.BUS_RUNNING);
 		} catch (Exception e) {
 			System.out.println(Props.BUS_ERR + e);
+			System.out.println(e);
 		}
 	}
 
