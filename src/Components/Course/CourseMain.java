@@ -4,13 +4,18 @@
 package Components.Course;
 
 import Components.RmiConnection;
+import Components.entity.NewStudent;
 import Framework.*;
 import Utils.EntityUtil;
 import Utils.Props;
+import Utils.Util;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class CourseMain {
@@ -42,9 +47,7 @@ public class CourseMain {
 						sendEvent(EventId.ClientOutput, deleteCourse(coursesList, event.getMessage()),  eventBus);
 						break;
 					case CheckCourseInfo :
-						if(validateCourses(event.getMessage()))
-							sendEvent(EventId.RegisterStudent,  Props.OK+Props.DIV+event.getMessage(),eventBus);
-						else sendEvent(EventId.ClientOutput,  Props.COURSE_NOT_VALID,  eventBus);
+						sendEvent(EventId.RegisterStudent,checkCourseInfo(coursesList, event.getMessage()),  eventBus);
 						break;
 					case ValidateCourse :
 //						if(coursesList.isRegisteredCourse(event.getMessage().split(Props.DIV)[1]))
@@ -60,6 +63,15 @@ public class CourseMain {
 				}
 			}
 		}
+	}
+
+	private static String checkCourseInfo(CourseComponent coursesList, String message) throws JsonProcessingException {
+		Util util = new Util();
+		ObjectMapper om = new ObjectMapper();
+		ArrayList<String> courseIds = util.extCourseInfoFrom(message);
+		NewStudent newStudent = new NewStudent(message);
+		for (String courseId : courseIds) newStudent.addPreCourseOf(courseId, coursesList.getPreCourseOf(courseId));
+		return om.writeValueAsString(newStudent);
 	}
 
 	private static boolean validateCourses(String message) {

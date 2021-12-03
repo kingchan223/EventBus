@@ -13,7 +13,10 @@ public class Student {
 	protected String studentId;
 	protected String name;
 	protected String department;
-	protected ArrayList<String> completedCoursesList = new ArrayList<String>();;
+	protected ArrayList<String> completedCoursesList = new ArrayList<String>();
+
+	public Student() {
+	}
 
 	public Student(String inputString) {
 		StringTokenizer stringTokenizer = new StringTokenizer(inputString);
@@ -74,5 +77,21 @@ public class Student {
 
 	public ArrayList<String> getCompletedCoursesList() {
 		return completedCoursesList;
+	}
+
+	public void setStudentId(String studentId) {
+		this.studentId = studentId;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	public void setCompletedCoursesList(ArrayList<String> completedCoursesList) {
+		this.completedCoursesList = completedCoursesList;
 	}
 }

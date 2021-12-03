@@ -5,13 +5,17 @@
 package Components.Student;
 
 import Components.RmiConnection;
+import Components.entity.NewStudent;
 import Framework.*;
 import Utils.EntityUtil;
 import Utils.Props;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class StudentMain {
@@ -36,12 +40,9 @@ public class StudentMain {
 			for (int i = 0; i < eventQueue.getSize(); i++) {
 				event = eventQueue.getEvent();
 				switch (event.getEventId()) {
-					case RegisterStudent:{
-						String message = event.getMessage();
-						if(message.split(Props.DIV)[1].equals(Props.OK)) registerWithOk(studentsList, message, eventBus);
-						else register(studentsList, eventBus, message);
+					case RegisterStudent:
+						sendEvent(EventId.ClientOutput, registerStudent(studentsList, event.getMessage()), eventBus);
 						break;
-					}
 					case ListStudents :
 						sendEvent(EventId.ClientOutput, makeStudentList(studentsList), eventBus);
 						break;
@@ -58,6 +59,21 @@ public class StudentMain {
 				}
 			}
 		}
+	}
+
+	private static String registerStudent(StudentComponent studentsList, String message) throws JsonProcessingException {
+		ObjectMapper om = new ObjectMapper();
+		NewStudent newStudent = om.readValue(message, NewStudent.class);
+		if(studentsList.isRegisteredStudent(newStudent.getStudentId())) return Props.STD_ALREADY_REGI;
+		ArrayList<String> completedCoursesList = newStudent.getCompletedCoursesList();
+		HashMap<String, ArrayList<String>> preCourseList = newStudent.getPreCourseList();
+		for (String key : preCourseList.keySet()) {
+			ArrayList<String> preCs = preCourseList.get(key);
+			for (String preC : preCs) if(!completedCoursesList.contains(preC)) return Props.PRE_NOT_ENOUGH;
+		}
+		Student student = newStudent.makeStudent();
+		studentsList.getStudentList().put(student.getStudentId(), student);
+		return Props.STUDENT_ADD;
 	}
 
 	private static void updateWithOk(StudentComponent studentsList, String message, RMIEventBus eventBus) throws RemoteException {

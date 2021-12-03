@@ -29,11 +29,6 @@ public class RMIEventBusImpl extends UnicastRemoteObject implements RMIEventBus 
 			Registry registry = LocateRegistry.createRegistry(Props.PORT);
 			registry.bind(Props.LOOKUP, eventBus);
 
-			Registry registry2 = LocateRegistry.getRegistry(Props.HOST, Props.PORT);
-			RMIEventBus lookup = (RMIEventBus)registry2.lookup(Props.LOOKUP);
-			registry.unbind(Props.LOOKUP);
-			registry.bind(Props.LOOKUP, lookup);
-
 //			System.out.println("registry2 = " + registry2);
 //			System.out.println("registry = " + registry);
 			System.out.println(Props.BUS_RUNNING);

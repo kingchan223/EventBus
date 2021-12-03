@@ -8,10 +8,12 @@ import Utils.Props;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class CourseComponent {
+
     protected HashMap<String, Course> vCourse;
 
     public CourseComponent(String sCourseFileName) throws IOException {
@@ -19,16 +21,23 @@ public class CourseComponent {
         this.vCourse  = new LinkedHashMap<>();
         while (bufferedReader.ready()) {
             String courseInfo = bufferedReader.readLine();
-            if(!courseInfo.equals(Props.EMPTY)) this.vCourse.put(courseInfo.split(Props.DIV)[0], new Course(courseInfo));
+            if(!courseInfo.equals(Props.EMPTY))
+                this.vCourse.put(courseInfo.split(Props.DIV)[0], new Course(courseInfo));
         }    
         bufferedReader.close();
     }
 
-    public HashMap<String, Course> getCourseList() {
+    public HashMap<String, Course> getCourseList(){
         return this.vCourse;
     }
 
-    public boolean isRegisteredCourse(String courseId) {
+
+    public boolean isRegisteredCourse(String courseId){
         return this.vCourse.get(courseId) != null;
+    }
+
+    public ArrayList<String> getPreCourseOf(String courseId){
+        Course course = vCourse.get(courseId);
+        return course.getPrerequisiteCoursesList();
     }
 }

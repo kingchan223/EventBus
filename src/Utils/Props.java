@@ -78,6 +78,7 @@ public interface Props {
     public static final String COURSE_NOT_REGI = "This course is not registered.";
     public static final String COURSE_NOT_VALID = "This course is not registered OR pre-course is not enough.";
     public static final String COURSE_ADD = "This course is successfully added.";
+    public static final String STUDENT_ADD = "This student is successfully added.";
     public static final String COURSE_ALREADY_REGI = "This course is already registered.";
     public static final String PRE_NOT_ENOUGH = "This student's PreCourse is not enough.";
     public static final String STD_UPDATED = "This student succeeded in registering for the course.";

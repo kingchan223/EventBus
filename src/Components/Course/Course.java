@@ -44,4 +44,8 @@ public class Course {
         }
         return stringReturn;
     }
+
+    public ArrayList<String> getPrerequisiteCoursesList() {
+        return prerequisiteCoursesList;
+    }
 }
