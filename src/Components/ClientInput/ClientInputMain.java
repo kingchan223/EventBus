@@ -38,7 +38,7 @@ public class ClientInputMain {
 						sendEvent(EventId.ListCourses, null, eventBus);
 						break;
 					case Props.MENU_N3 :
-						sendEvent(EventId.RegisterStudent, makeStudentInfo(), eventBus);
+						sendEvent(EventId.CheckCourseInfo, makeStudentInfo(), eventBus);
 						break;
 					case Props.MENU_N4 :
 						sendEvent(EventId.RegisterCourse, makeCourseInfo(), eventBus);

@@ -41,7 +41,7 @@ public class CourseMain {
 					case DeleteCourse :
 						sendEvent(EventId.ClientOutput, deleteCourse(coursesList, event.getMessage()),  eventBus);
 						break;
-					case ValidateCourses :
+					case CheckCourseInfo :
 						if(validateCourses(event.getMessage()))
 							sendEvent(EventId.RegisterStudent,  Props.OK+Props.DIV+event.getMessage(),eventBus);
 						else sendEvent(EventId.ClientOutput,  Props.COURSE_NOT_VALID,  eventBus);
