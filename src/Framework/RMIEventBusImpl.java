@@ -24,27 +24,21 @@ public class RMIEventBusImpl extends UnicastRemoteObject implements RMIEventBus 
 
 	public static void main(String[] args) {
 		try {
-			//EventBus는 이벤트를 처리할 각 이벤트 리스너를 등록하고 각 리스너에게 이벤트를 전파하는 역할
 			RMIEventBusImpl eventBus = new RMIEventBusImpl();
 			Registry registry = LocateRegistry.createRegistry(Props.PORT);
 			registry.bind(Props.LOOKUP, eventBus);
-
-//			System.out.println("registry2 = " + registry2);
-//			System.out.println("registry = " + registry);
 			System.out.println(Props.BUS_RUNNING);
 		} catch (Exception e) {
 			System.out.println(Props.BUS_ERR + e);
 			System.out.println(e);
 		}
 	}
-
 	synchronized public long register() throws RemoteException {
 		EventQueue newEventQueue = new EventQueue();
 		eventQueueList.add( newEventQueue );
 		System.out.println(Props.COMPONENT_REGI+ newEventQueue.getId());
 		return newEventQueue.getId();
 	}
-
 	synchronized public void unRegister(long id) throws RemoteException {
 		EventQueue eventQueue;
 		for ( int i = 0; i < eventQueueList.size(); i++ ) {

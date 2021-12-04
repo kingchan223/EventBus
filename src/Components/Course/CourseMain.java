@@ -5,8 +5,8 @@ package Components.Course;
 
 import Components.RmiConnection;
 import Components.entity.NewStudent;
+import Components.entity.RegisterCourse;
 import Framework.*;
-import Utils.EntityUtil;
 import Utils.Props;
 import Utils.Util;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,13 +46,11 @@ public class CourseMain {
 					case DeleteCourse :
 						sendEvent(EventId.ClientOutput, deleteCourse(coursesList, event.getMessage()),  eventBus);
 						break;
-					case CheckCourseInfo :
-						sendEvent(EventId.RegisterStudent,checkCourseInfo(coursesList, event.getMessage()),  eventBus);
+					case AddPreCoursesInfo :
+						sendEvent(EventId.RegisterStudent,makeNewStudentJson(coursesList, event.getMessage()),  eventBus);
 						break;
-					case ValidateCourse :
-//						if(coursesList.isRegisteredCourse(event.getMessage().split(Props.DIV)[1]))
-//							sendEvent(EventId.EnrollmentStudent, courseInfoLine(coursesList, event.getMessage()), eventBus);
-//						else sendEvent(EventId.ClientOutput,  Props.COURSE_NOT_REGI,  eventBus);
+					case AddPreCourseInfo :
+						sendEvent(EventId.EnrollCourseByStudent,makeRegisterCourseJson(coursesList, event.getMessage()),  eventBus);
 						break;
 					case QuitTheSystem :
 						sendEventQuit(EventId.QuitTheSystem, Props.QUIT_SYS, componentId, eventBus);
@@ -65,7 +63,16 @@ public class CourseMain {
 		}
 	}
 
-	private static String checkCourseInfo(CourseComponent coursesList, String message) throws JsonProcessingException {
+	private static String makeRegisterCourseJson(CourseComponent coursesList, String message) throws JsonProcessingException {
+		ObjectMapper om = new ObjectMapper();
+		String courseId = message.split(Props.DIV)[1];
+		RegisterCourse registerCourse = new RegisterCourse();
+		registerCourse.setStudentId(message.split(Props.DIV)[0]);
+		registerCourse.addPreCourseOf(courseId, coursesList.getPreCourseOf(courseId));
+		return om.writeValueAsString(registerCourse);
+	}
+
+	private static String makeNewStudentJson(CourseComponent coursesList, String message) throws JsonProcessingException {
 		Util util = new Util();
 		ObjectMapper om = new ObjectMapper();
 		ArrayList<String> courseIds = util.extCourseInfoFrom(message);
@@ -75,8 +82,8 @@ public class CourseMain {
 	}
 
 	private static boolean validateCourses(String message) {
-		EntityUtil entityUtil = new EntityUtil();
-		return entityUtil.validatePreCourse(message);
+		Util util = new Util();
+		return util.validatePreCourse(message);
 	}
 
 	private static String courseInfoLine(CourseComponent coursesList, String message) {

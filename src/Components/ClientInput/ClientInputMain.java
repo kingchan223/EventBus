@@ -3,10 +3,8 @@
  */
 package Components.ClientInput;
 
-import Utils.InputType;
 import Components.RmiConnection;
 import Framework.*;
-import Utils.EntityUtil;
 import Utils.Props;
 import Utils.Util;
 
@@ -15,11 +13,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.rmi.*;
 
-/*Send Event*/
 public class ClientInputMain {
 
 	private static final Util util = new Util();
-	private static final EntityUtil eUtil = new EntityUtil();
 
 	public static void main(String[] args) throws RemoteException, NotBoundException{
 		RMIEventBus eventBus = RmiConnection.getInstance();
@@ -38,7 +34,7 @@ public class ClientInputMain {
 						sendEvent(EventId.ListCourses, null, eventBus);
 						break;
 					case Props.MENU_N3 :
-						sendEvent(EventId.CheckCourseInfo, makeStudentInfo(), eventBus);
+						sendEvent(EventId.AddPreCoursesInfo, makeStudentInfo(), eventBus);
 						break;
 					case Props.MENU_N4 :
 						sendEvent(EventId.RegisterCourse, makeCourseInfo(), eventBus);
@@ -50,7 +46,7 @@ public class ClientInputMain {
 						sendEvent(EventId.DeleteCourse, deleteCourseID(),eventBus);
 						break;
 					case Props.MENU_N7 :
-						sendEvent(EventId.EnrollCourseByStudent, courseEnrolment(), eventBus);
+						sendEvent(EventId.AddPreCourseInfo, courseEnrolment(), eventBus);
 						break;
 					case Props.MENU_N0 :
 						sendEventQuit(EventId.QuitTheSystem, Props.QUIT_SYS, componentId, eventBus);
@@ -106,7 +102,7 @@ public class ClientInputMain {
 		String department = util.validateStr(new BufferedReader(new InputStreamReader(System.in)).readLine().trim(), InputType.Department);
 		System.out.println(Props.STD_COMP_COURSE_MSG);
 		String compCourseIds = util.validateCourseIds(new BufferedReader(new InputStreamReader(System.in)).readLine());
-		String studentInfo = eUtil.makeStudentStr(id, firstName, familyName, department, compCourseIds);
+		String studentInfo = util.makeStudentStr(id, firstName, familyName, department, compCourseIds);
 		Props.printUserInput(studentInfo);
 		return studentInfo;
 	}
@@ -120,7 +116,7 @@ public class ClientInputMain {
 		String courseName = util.validateStr(new BufferedReader(new InputStreamReader(System.in)).readLine().trim(), InputType.CourseName);
 		System.out.println(Props.COURSE_PRECOURSE_MSG);
 		String preCourseIds= util.validateCourseIds(new BufferedReader(new InputStreamReader(System.in)).readLine());
-		String courseInfo = eUtil.makeCourseStr(id, familyName, courseName, preCourseIds);
+		String courseInfo = util.makeCourseStr(id, familyName, courseName, preCourseIds);
 		Props.printUserInput(courseInfo);
 		return courseInfo;
 	}
@@ -143,5 +139,9 @@ public class ClientInputMain {
 
 	private static void printWrongMenu(){
 		System.out.println(Props.SELECT_AGAIN);
+	}
+
+	public enum InputType {
+		CourseName, FirstName, FamilyName, Department
 	}
 }

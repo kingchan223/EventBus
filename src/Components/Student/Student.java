@@ -94,4 +94,8 @@ public class Student {
 	public void setCompletedCoursesList(ArrayList<String> completedCoursesList) {
 		this.completedCoursesList = completedCoursesList;
 	}
+
+	public void addCompletedCourse(String id){
+		this.completedCoursesList.add(id);
+	}
 }

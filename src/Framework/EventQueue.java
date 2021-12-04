@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright(c) 2021 All rights reserved by Jungho Kim in MyungJi University 
  */
 
@@ -12,7 +12,7 @@ import java.util.Vector;
 
 public class EventQueue implements Serializable {
 
-	private static final long serialVersionUID = Props.UID; // Default value for Serializable interface
+	private static final long serialVersionUID = Props.UID;
     private Vector<Event> eventList;
 	private long componentId;
 

@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 
 public class Event implements Serializable {
-	private static final long serialVersionUID = Props.UID; //Default serializable value
+	private static final long serialVersionUID = Props.UID;
     private String message;
 	private EventId eventId;
 
@@ -18,11 +18,6 @@ public class Event implements Serializable {
 		this.message = text;
 		this.eventId = id;
 	}
-
-//	public Event(EventId id, String text) {
-//		this.message = text;
-//		this.eventId = id;
-//	}
 
 	public Event(EventId id ) {
 		this.message = null;

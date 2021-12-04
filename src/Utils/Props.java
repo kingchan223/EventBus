@@ -17,12 +17,9 @@ public interface Props {
     public static final String LOOKUP = "EventBus";
     public static final String COURSES_TXT = "src/Courses.txt";
     public static final String STUDENTS_TXT = "src/Students.txt";
-    public static final String GET = "Get";
-    public static final String POST = "Post";
-    public static final String PUT = "Put";
-    public static final String OK = "OK12345";
-
-
+    public static final String COURSE_ENROLLMENT_TXT = "src/RegisterCourse.txt";
+    public static final Long E1UID = 1000L;
+    public static final Long E2UID = 1001L;
 
     public static final String STD_ID_MSG = "\nEnter student ID and press return (Ex. 20131234)>> ";
     public static final String STD_FMNAME_MSG = "\nEnter family name and press return (Ex. Hong)>> ";
@@ -78,7 +75,6 @@ public interface Props {
     public static final String COURSE_NOT_REGI = "This course is not registered.";
     public static final String COURSE_NOT_VALID = "This course is not registered OR pre-course is not enough.";
     public static final String COURSE_ADD = "This course is successfully added.";
-    public static final String STUDENT_ADD = "This student is successfully added.";
     public static final String COURSE_ALREADY_REGI = "This course is already registered.";
     public static final String PRE_NOT_ENOUGH = "This student's PreCourse is not enough.";
     public static final String STD_UPDATED = "This student succeeded in registering for the course.";

@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 
 public class NewStudent implements Serializable{
 
-    public static final Long serialVersionUID = 1000L;
+    public static final Long serialVersionUID = Props.E1UID;
 
     String studentId;
     String name;

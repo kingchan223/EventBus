@@ -12,11 +12,7 @@ public class RmiConnection {
 
     private static RMIEventBus rmiEventBus = null;
 
-    public RmiConnection() throws RemoteException, NotBoundException {
-//        System.out.println("constructor");
-//        Registry registry = LocateRegistry.getRegistry("127.0.0.1", Props.PORT);
-//        rmiEventBus = (RMIEventBus) registry.lookup("EventBus");
-    }
+    public RmiConnection(){}
 
     public static RMIEventBus getInstance() throws RemoteException, NotBoundException {
         if(rmiEventBus==null){

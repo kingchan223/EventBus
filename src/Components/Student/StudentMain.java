@@ -6,13 +6,16 @@ package Components.Student;
 
 import Components.RmiConnection;
 import Components.entity.NewStudent;
+import Components.entity.RegisterCourse;
 import Framework.*;
-import Utils.EntityUtil;
 import Utils.Props;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -20,7 +23,6 @@ import java.util.HashMap;
 
 public class StudentMain {
 
-	private final static EntityUtil entityUtil = new EntityUtil();
 
 	public static void main(String[] args) throws IOException, NotBoundException {
 		RMIEventBus eventBus = RmiConnection.getInstance();
@@ -49,16 +51,36 @@ public class StudentMain {
 					case DeleteStudent :
 						sendEvent(EventId.ClientOutput, deleteStudent(studentsList, event.getMessage()), eventBus);
 						break;
-					case EnrollCourseByStudent :
-						String message = event.getMessage();
-						if(message.split(Props.DIV)[1].equals(Props.OK)) updateWithOk(studentsList, message, eventBus);
-						else sendEvent(EventId.ClientOutput,courseEnrolment(studentsList, event.getMessage(), eventBus), eventBus);
+					case EnrollCourseByStudent ://학생 아이디와 강좌 정보 객체가 들어온다.
+						sendEvent(EventId.ClientOutput, courseEnrolment(studentsList, event.getMessage()), eventBus);
+						break;
+					case QuitTheSystem :
+						sendEventQuit(EventId.QuitTheSystem, Props.QUIT_SYS, componentId, eventBus);
+						done = true;
 						break;
 					default :
 						break;
 				}
 			}
 		}
+	}
+
+	private static String courseEnrolment(StudentComponent studentsList, String message) throws JsonProcessingException {
+		ObjectMapper om = new ObjectMapper();
+		RegisterCourse registerCourse = om.readValue(message, RegisterCourse.class);
+		if(!studentsList.isRegisteredStudent(registerCourse.getStudentId())) return Props.STD_NOT_REGI;
+		Student student = studentsList.getStudentList().get(registerCourse.getStudentId());
+		HashMap<String, ArrayList<String>> preCourseList = registerCourse.getPreCourseList();
+		String registerCourseId = Props.EMPTY;
+		for (String key : preCourseList.keySet()) {
+			registerCourseId = key;
+			ArrayList<String> preCs = preCourseList.get(key);
+			for (String preC : preCs) if(!student.getCompletedCoursesList().contains(preC)) return Props.PRE_NOT_ENOUGH;
+		}
+		if(student.getCompletedCoursesList().contains(registerCourseId)) return Props.STD_ALREADY_COMP;
+		writeRegisterCourse(registerCourse.getStudentId(), registerCourseId);
+		student.addCompletedCourse(registerCourseId);
+		return Props.STD_UPDATED;
 	}
 
 	private static String registerStudent(StudentComponent studentsList, String message) throws JsonProcessingException {
@@ -73,45 +95,7 @@ public class StudentMain {
 		}
 		Student student = newStudent.makeStudent();
 		studentsList.getStudentList().put(student.getStudentId(), student);
-		return Props.STUDENT_ADD;
-	}
-
-	private static void updateWithOk(StudentComponent studentsList, String message, RMIEventBus eventBus) throws RemoteException {
-		String[] split = message.split(Props.DIV);
-		Student student = studentsList.getStudentList().get(split[1]);
-		String updated = student.getString()+Props.DIV+split[2];
-		Student updatedStudent = new Student(updated);
-		studentsList.vStudent.replace(student.getStudentId(), updatedStudent);
-		sendEvent(EventId.ClientOutput, Props.STD_ADD, eventBus);
-	}
-
-	private static void register(StudentComponent studentsList, RMIEventBus eventBus, String message) throws RemoteException {
-		Student student = new Student(message);
-		if(student.hasCourseInfo()) sendEvent(EventId.ValidateCourses, message, eventBus);
-		else{
-			Student student1 = new Student(message);
-			studentsList.vStudent.put(student1.getStudentId(), student1);
-			sendEvent(EventId.ClientOutput, Props.STD_ADD, eventBus);
-		}
-	}
-
-	private static void registerWithOk(StudentComponent studentsList, String message, RMIEventBus eventBus) throws RemoteException {
-		Student student = Student.makeStudentWithOk(message);
-		studentsList.vStudent.put(student.getStudentId(), student);
-		sendEvent(EventId.ClientOutput, Props.STD_ADD, eventBus);
-	}
-
-	private static String courseEnrolment(StudentComponent studentsList, String message, RMIEventBus eventBus) throws RemoteException {
-		String studentId = message.split(Props.DIV)[0];
-		String courseId = message.split(Props.DIV)[1];
-		if(!studentsList.isRegisteredStudent(studentId)) return Props.STD_NOT_REGI;
-		String studentStr = studentsList.getStudentList().get(studentId).getString();
-		if(studentStr.contains(courseId)) return Props.STD_ALREADY_COMP;
-		if(entityUtil.validatePreCourse(studentStr, message)) {
-			sendEvent(EventId.ValidateCourse, message, eventBus);
-			return Props.STD_CHECK_COURSE;
-		}
-		else return Props.PRE_NOT_ENOUGH;
+		return Props.STD_ADD;
 	}
 
 	public static void sendEvent(EventId eventId, String text, RMIEventBus eventBus) throws RemoteException {
@@ -142,5 +126,14 @@ public class StudentMain {
 
 	private static void printLogEvent(Event event) {
 		System.out.println(Props.EVENT_INFO_ID + event.getEventId() + Props.EVENT_INFO_MSG + event.getMessage());
+	}
+
+	public static void writeRegisterCourse(String studentId, String courseId){
+		try {
+			Files.write(Paths.get(Props.COURSE_ENROLLMENT_TXT),
+					(studentId+Props.DIV+courseId).getBytes(), StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
